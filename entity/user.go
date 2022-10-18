@@ -11,13 +11,13 @@ import (
 )
 
 type User struct {
-	ID        int    `gorm:"primaryKey"`
-	Username  string `gorm:"type:varchar;unique;not null"`
-	Email     string `gorm:"type:varchar;unique;not null"`
-	Password  string `gorm:"not null"`
-	Age       int    `gorm:"not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int       `json:"id" gorm:"primaryKey"`
+	Username  string    `json:"username" gorm:"type:varchar;unique;not null"`
+	Email     string    `json:"email" gorm:"type:varchar;unique;not null"`
+	Password  string    `json:"password" gorm:"not null"`
+	Age       int       `json:"age" gorm:"not null"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 var secret_key = "RAHASIA"
