@@ -38,8 +38,8 @@ func StartServer() *gin.Engine {
 	{
 		userRoute.POST("/register", userRestHandler.Register)
 		userRoute.POST("/login", userRestHandler.Login)
-		userRoute.PUT("/:userId", authService.Authentication(), userRestHandler.Updated)
-		userRoute.DELETE("/:userId", authService.Authentication(), userRestHandler.Deleted)
+		userRoute.PUT("", authService.Authentication(), userRestHandler.Updated)
+		userRoute.DELETE("", authService.Authentication(), userRestHandler.Deleted)
 	}
 	photoRoute := router.Group("/photo")
 	{

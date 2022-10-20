@@ -1,13 +1,15 @@
 package handler
 
 import (
+	"errors"
 	"final_project_go/dto"
+	"final_project_go/entity"
 	"final_project_go/service"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type userRestHandler struct {
@@ -35,22 +37,34 @@ func (u userRestHandler) Login(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
-			"msg": err.Error(),
+			"msg": err.Message(),
 			"err": "BAD_REQUEST",
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, token)
+	c.JSON(http.StatusOK, token)
 }
 
 func (u userRestHandler) Register(c *gin.Context) {
 	var user dto.RegisterRequest
+	//var errormsg helpers.ErrorMsg
 
 	if err := c.ShouldBindJSON(&user); err != nil {
+		var ve validator.ValidationErrors
+
+		if errors.As(err, &ve) {
+			errormsg := make([]ErrorMsg, len(ve))
+			for i, fe := range ve {
+				errormsg[i] = ErrorMsg{getErrorMsg(fe)}
+			}
+			c.JSON(http.StatusBadRequest, errormsg)
+			return
+		}
+
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"msg": "invalid JSON request",
-			"err": "BAD_REQUEST",
+			"err": err.Error(),
 		})
 		return
 	}
@@ -58,39 +72,22 @@ func (u userRestHandler) Register(c *gin.Context) {
 	result, err := u.service.Register(&user)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "unique") {
-			if strings.Contains(err.Error(), "email") {
-				c.JSON(http.StatusBadRequest, map[string]interface{}{
-					"msg": err.Error(),
-					"err": "email telah digunakan",
-				})
-				return
-			}
-
-			c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"msg": err.Error(),
-				"err": "username telah digunakan",
-			})
-			return
-		}
-		c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"msg": err.Error(),
-			"err": "BAD_REQUEST",
-		})
+		c.JSON(err.Status(), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.DataRegisterResponse(*result))
+	c.JSON(http.StatusCreated, dto.DataRegisterResponse(*result))
 }
 
 func (u userRestHandler) Updated(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"msg": err.Error(),
-			"err": "BAD_REQUEST",
+	var userData entity.User
+	if value, ok := c.MustGet("userData").(entity.User); !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"err_message": "unauthorized",
 		})
 		return
+	} else {
+		userData = value
 	}
 
 	var user dto.UpdateRequest
@@ -103,32 +100,11 @@ func (u userRestHandler) Updated(c *gin.Context) {
 		return
 	}
 
-	result, err := u.service.UpdatedUser(id, &user)
+	result, err := u.service.UpdatedUser(userData.ID, &user)
+
 	if err != nil {
-		if err.Error() == "users doesn't exit" {
-			c.JSON(http.StatusNotFound, map[string]interface{}{
-				"msg": http.StatusText(http.StatusNotFound),
-			})
-			return
-		}
-
-		if strings.Contains(err.Error(), "unique") {
-			if strings.Contains(err.Error(), "email") {
-				c.JSON(http.StatusInternalServerError, map[string]interface{}{
-					"msg": err.Error(),
-					"err": "email telah digunakan",
-				})
-				return
-			}
-
-			c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"msg": err.Error(),
-				"err": "username telah digunakan",
-			})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"msg": http.StatusText(http.StatusInternalServerError),
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"msg": err.Error(),
 			"err": "BAD_REQUEST",
 		})
 		return

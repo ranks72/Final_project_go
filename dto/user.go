@@ -13,10 +13,10 @@ type LoginRequest struct {
 }
 
 type RegisterRequest struct {
-	Username string `json:"username" binding:"required" `
-	Email    string `json:"email" binding:"required,email"`
+	Username string `json:"username" valid:"required~username cannot be empty" binding:"required"`
+	Email    string `json:"email" valid:"required~email cannot be empty,email~Invalid email format" binding:"required,email"`
 	Password string `json:"password" valid:"required~password cannot be empty" binding:"required,min=6"`
-	Age      int    `json:"age" valid:"required~age cannot be empty"`
+	Age      int    `json:"age" valid:"required~age cannot be empty" binding:"required,min=9"`
 }
 
 type UpdateRequest struct {

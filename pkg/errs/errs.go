@@ -2,21 +2,17 @@ package errs
 
 import "net/http"
 
-
 type MessageErr interface {
 	Message() string
 	Status() int
 	Error() string
 }
 
-
 type MessageErrData struct {
 	ErrMessage string `json:"message"`
 	ErrStatus  int    `json:"status"`
 	ErrError   string `json:"error"`
 }
-
-
 
 func (e *MessageErrData) Message() string {
 	return e.ErrMessage

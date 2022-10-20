@@ -6,7 +6,6 @@ import (
 	"final_project_go/pkg/errs"
 	"final_project_go/pkg/helpers"
 	"final_project_go/repository/user_repository"
-	"fmt"
 )
 
 type UserService interface {
@@ -107,7 +106,11 @@ func (u *userService) UpdatedUser(userId int, userPayload *dto.UpdateRequest) (*
 	}
 
 	user, err = u.userRepo.GetUserById(userId)
-	fmt.Println(user)
+	if err != nil {
+		return nil, err
+	}
+
+	//fmt.Println(user)
 
 	return user, nil
 }

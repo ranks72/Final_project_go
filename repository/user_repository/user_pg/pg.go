@@ -5,6 +5,7 @@ import (
 	"final_project_go/entity"
 	"final_project_go/pkg/errs"
 	"final_project_go/repository/user_repository"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -38,14 +39,22 @@ func (u *userPG) Login(userPayload *entity.User) (*entity.User, errs.MessageErr)
 
 	if err := u.db.Select("id", "email", "password").
 		First(user, "email", userPayload.Email).Error; err != nil {
-		return nil, errs.NewInternalServerErrorr("something went wrong")
+		return nil, errs.NewInternalServerErrorr("email dan username salah")
 	}
 	return user, nil
 }
 
 func (u *userPG) Register(userPayload *entity.User) (*entity.User, errs.MessageErr) {
-
+	//fmt.Println(userPayload)
 	if err := u.db.Create(userPayload).Error; err != nil {
+		if strings.Contains(err.Error(), "unique") {
+			if strings.Contains(err.Error(), "email") {
+				checkerr := errs.NewInternalServerErrorr("email is already used")
+				return nil, checkerr
+			}
+			checkerr := errs.NewInternalServerErrorr("username is already used")
+			return nil, checkerr
+		}
 		return nil, errs.NewInternalServerErrorr("something went wrong")
 	}
 	return userPayload, nil
@@ -66,7 +75,22 @@ func (u *userPG) EditedUser(id int, userPayload *entity.User) (*entity.User, err
 	query := u.db.Where("id", id).Updates(userPayload)
 	err := query.Error
 	if err == nil && query.RowsAffected < 1 {
-		return nil, errs.NewNotFoundError("users doesn't exit")
+		if strings.Contains(err.Error(), "unique") {
+			if strings.Contains(err.Error(), "email") {
+				checkerr := errs.NewInternalServerErrorr("email is already used")
+				return nil, checkerr
+			}
+			checkerr := errs.NewInternalServerErrorr("username is already used")
+			return nil, checkerr
+		}
+	}
+
+	user := &entity.User{}
+
+	err = u.db.First(user, "id", id).Error
+
+	if err != nil {
+		return nil, errs.NewInternalServerErrorr("akun tidak ditemukan")
 	}
 
 	return userPayload, nil

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"final_project_go/dto"
 	"final_project_go/entity"
 	"final_project_go/service"
@@ -8,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type photoRestHandler struct {
@@ -24,9 +26,6 @@ func (u photoRestHandler) AddPhotoHandler(c *gin.Context) {
 	var photoRequest dto.RequestPhoto
 
 	var userData entity.User
-
-	// value := c.MustGet("userData").(jwt.MapClaims)
-	// userID := int(value["id"].(float64))
 	if value, ok := c.MustGet("userData").(entity.User); !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"err_message": "unauthorized",
@@ -35,11 +34,19 @@ func (u photoRestHandler) AddPhotoHandler(c *gin.Context) {
 	} else {
 		userData = value
 	}
-	// var checkType = reflect.ValueOf(userData.ID)
-	// fmt.Println(userData.ID)
-	// fmt.Println("type data", checkType.Type())
 
 	if err := c.ShouldBindJSON(&photoRequest); err != nil {
+		var ve validator.ValidationErrors
+
+		if errors.As(err, &ve) {
+			errormsg := make([]ErrorMsg, len(ve))
+			for i, fe := range ve {
+				errormsg[i] = ErrorMsg{getErrorMsg(fe)}
+			}
+			c.JSON(http.StatusBadRequest, errormsg)
+			return
+		}
+
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"msg": "invalid JSON request",
 			"err": "BAD_REQUEST",
@@ -50,7 +57,7 @@ func (u photoRestHandler) AddPhotoHandler(c *gin.Context) {
 	result, err := u.service.PostPhoto(userData.ID, &photoRequest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
-			"msg": http.StatusText(http.StatusInternalServerError),
+			"msg": err.Message(),
 			"err": "INTERNAL_SERVER_ERROR",
 		})
 		return
