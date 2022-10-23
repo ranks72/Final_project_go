@@ -16,8 +16,8 @@ type User struct {
 	Email     string    `json:"email" gorm:"type:varchar; unique;not null"`
 	Password  string    `json:"password" gorm:"not null"`
 	Age       int       `json:"age" gorm:"not null"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"default:now()"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"default:now()"`
 }
 
 var secret_key = "RAHASIA"

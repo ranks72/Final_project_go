@@ -39,7 +39,7 @@ func (u *photoPG) EditedPhoto(photoId int, photoPayload *entity.Photo) (*entity.
 	query := u.db.Where("id", photoId).Updates(photoPayload)
 	err := query.Error
 	if err == nil && query.RowsAffected < 1 {
-		return nil, errs.NewNotFoundError("users doesn't exit")
+		return nil, errs.NewNotFoundError("photo doesn't exit")
 	}
 
 	return photoPayload, nil

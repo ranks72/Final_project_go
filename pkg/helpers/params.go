@@ -6,13 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-func GetParamId(c *gin.Context,key string) (int, error) {
+func GetParamId(c *gin.Context, key string) (int, error) {
 	value := c.Param(key)
 
 	id, err := strconv.Atoi(value)
 
-	if err != nil {
+	if err != nil || id < 1 {
 		return 0, err
 	}
 

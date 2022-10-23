@@ -11,6 +11,7 @@ import (
 type PhotoService interface {
 	PostPhoto(userId int, photoPayload *dto.RequestPhoto) (*entity.Photo, errs.MessageErr)
 	GetAllPhoto() ([]entity.Photo, errs.MessageErr)
+	FindPhotoid(photoID int) (*entity.Photo, errs.MessageErr)
 	UpdatedPhoto(photoId int, photoPayload *dto.RequestPhoto) (*entity.Photo, errs.MessageErr)
 	DeletedPhoto(photoId int) error
 }
@@ -55,6 +56,16 @@ func (u *photoService) GetAllPhoto() ([]entity.Photo, errs.MessageErr) {
 	}
 
 	return photos, nil
+}
+
+func (u *photoService) FindPhotoid(photoId int) (*entity.Photo, errs.MessageErr) {
+	photo, err := u.photoRepo.GetPhotoById(photoId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return photo, nil
 }
 
 func (u *photoService) UpdatedPhoto(photoId int, photoPayload *dto.RequestPhoto) (*entity.Photo, errs.MessageErr) {

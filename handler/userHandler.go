@@ -1,15 +1,12 @@
 package handler
 
 import (
-	"errors"
 	"final_project_go/dto"
 	"final_project_go/entity"
 	"final_project_go/service"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type userRestHandler struct {
@@ -51,16 +48,6 @@ func (u userRestHandler) Register(c *gin.Context) {
 	//var errormsg helpers.ErrorMsg
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		var ve validator.ValidationErrors
-
-		if errors.As(err, &ve) {
-			errormsg := make([]ErrorMsg, len(ve))
-			for i, fe := range ve {
-				errormsg[i] = ErrorMsg{getErrorMsg(fe)}
-			}
-			c.JSON(http.StatusBadRequest, errormsg)
-			return
-		}
 
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"msg": "invalid JSON request",
@@ -103,29 +90,28 @@ func (u userRestHandler) Updated(c *gin.Context) {
 	result, err := u.service.UpdatedUser(userData.ID, &user)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"msg": err.Error(),
-			"err": "BAD_REQUEST",
-		})
+		c.JSON(err.Status(), err)
 		return
 	}
 	c.JSON(http.StatusOK, dto.DataUpdateResponse(*result))
 }
 
 func (u userRestHandler) Deleted(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"msg": err.Error(),
-			"err": "BAD_REQUEST",
+	var userData entity.User
+	if value, ok := c.MustGet("userData").(entity.User); !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"err_message": "unauthorized",
 		})
 		return
+	} else {
+		userData = value
 	}
-	delete := u.service.DeletedUser(id)
+
+	delete := u.service.DeletedUser(userData.ID)
 	if delete != nil {
 		if delete.Error() == "NOT FOUND" {
 			c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"msg": err.Error(),
+				"msg": delete.Error(),
 			})
 			return
 		}

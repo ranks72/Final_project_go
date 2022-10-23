@@ -20,8 +20,8 @@ type RegisterRequest struct {
 }
 
 type UpdateRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" valid:"required~email cannot be empty,email~Invalid email format" binding:"required,email"`
+	Username string `json:"username" valid:"required~username cannot be empty" binding:"required"`
 }
 
 // response
@@ -64,6 +64,12 @@ func DataUpdateResponse(data entity.User) UpdateResponse {
 }
 
 type UserResponsePhoto struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+type UserResponseComment struct {
+	ID       int    `json:"id"`
 	Email    string `json:"email"`
 	Username string `json:"username"`
 }

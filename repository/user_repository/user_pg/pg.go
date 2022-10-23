@@ -5,6 +5,7 @@ import (
 	"final_project_go/entity"
 	"final_project_go/pkg/errs"
 	"final_project_go/repository/user_repository"
+	"fmt"
 	"strings"
 
 	"gorm.io/gorm"
@@ -45,7 +46,7 @@ func (u *userPG) Login(userPayload *entity.User) (*entity.User, errs.MessageErr)
 }
 
 func (u *userPG) Register(userPayload *entity.User) (*entity.User, errs.MessageErr) {
-	//fmt.Println(userPayload)
+	fmt.Println(userPayload)
 	if err := u.db.Create(userPayload).Error; err != nil {
 		if strings.Contains(err.Error(), "unique") {
 			if strings.Contains(err.Error(), "email") {

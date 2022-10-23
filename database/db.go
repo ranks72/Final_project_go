@@ -35,7 +35,7 @@ func StartDb() {
 	fmt.Println("successfully connected to my database")
 
 	//untuk buat tabel baru
-	//db.Debug().AutoMigrate(entity.User{}, entity.Photo{})
+	//db.Debug().AutoMigrate(entity.User{}, entity.Photo{}, entity.Comment{}, entity.SocialMedia{})
 }
 
 func GetDb() *gorm.DB {

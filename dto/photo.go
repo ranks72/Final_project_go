@@ -7,19 +7,10 @@ import (
 
 // request
 type RequestPhoto struct {
-	Title    string `json:"title" binding:"required"`
+	Title    string `json:"title" valid:"required~Title of your photo is required"`
 	Caption  string `json:"caption"`
-	PhotoUrl string `json:"photo_url" binding:"required"`
+	PhotoUrl string `json:"photo_url" valid:"required~Url of your photo cannot be empty"`
 }
-
-// func (data *RequestPhoto) RequestPhotos(userId int) *entity.Photo {
-// 	return &entity.Photo{
-// 		UserID:   userId,
-// 		Title:    data.Title,
-// 		Caption:  data.Caption,
-// 		PhotoUrl: data.PhotoUrl,
-// 	}
-// }
 
 // respons
 type CreatePhotoResponse struct {
@@ -94,4 +85,12 @@ func UpdatedPhotoResponse(data entity.Photo) UpdatePhoto {
 		UserID:    data.UserID,
 		UpdatedAt: data.UpdatedAt,
 	}
+}
+
+type PhotoCommentResponse struct {
+	ID       int    `json:"id"`
+	Title    string `json:"title"`
+	Caption  string `json:"caption"`
+	PhotoUrl string `json:"photo_url"`
+	UserID   int    `json:"user_id"`
 }

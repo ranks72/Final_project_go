@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"final_project_go/dto"
 	"final_project_go/entity"
 	"final_project_go/service"
@@ -9,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type photoRestHandler struct {
@@ -36,17 +34,6 @@ func (u photoRestHandler) AddPhotoHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&photoRequest); err != nil {
-		var ve validator.ValidationErrors
-
-		if errors.As(err, &ve) {
-			errormsg := make([]ErrorMsg, len(ve))
-			for i, fe := range ve {
-				errormsg[i] = ErrorMsg{getErrorMsg(fe)}
-			}
-			c.JSON(http.StatusBadRequest, errormsg)
-			return
-		}
-
 		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"msg": "invalid JSON request",
 			"err": "BAD_REQUEST",
