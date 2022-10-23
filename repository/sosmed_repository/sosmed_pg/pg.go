@@ -29,9 +29,11 @@ func (u *sosmedPG) CreateSosmedRepo(sosmedPayload *entity.SocialMedia) (*entity.
 func (u *sosmedPG) GetSosmedById(sosmedId int) (*entity.SocialMedia, errs.MessageErr) {
 	sosmed := &entity.SocialMedia{}
 	err := u.db.First(sosmed, "id", sosmedId).Error
+
 	if err != nil {
 		return nil, errs.NewInternalServerErrorr("something went wrong")
 	}
+
 	return sosmed, nil
 }
 
@@ -48,7 +50,8 @@ func (u *sosmedPG) EditedSosmedRepo(sosmedId int, sosmedPayload *entity.SocialMe
 	query := u.db.Where("id", sosmedId).Updates(sosmedPayload)
 	err := query.Error
 	if err == nil && query.RowsAffected < 1 {
-		return nil, errs.NewNotFoundError("social media doesn't exit")
+		checkerr := errs.NewInternalServerErrorr("email is already used")
+		return nil, checkerr
 	}
 
 	return sosmedPayload, nil

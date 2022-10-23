@@ -43,10 +43,7 @@ func (u photoRestHandler) AddPhotoHandler(c *gin.Context) {
 
 	result, err := u.service.PostPhoto(userData.ID, &photoRequest)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
-			"msg": err.Message(),
-			"err": "INTERNAL_SERVER_ERROR",
-		})
+		c.JSON(err.Status(), err)
 		return
 	}
 

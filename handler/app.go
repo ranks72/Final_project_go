@@ -75,6 +75,9 @@ func StartServer() *gin.Engine {
 	{
 		sosmedRoute.Use(authService.Authentication())
 		sosmedRoute.POST("", sosmedRestHandler.AddSosmedHandler)
+		sosmedRoute.GET("", sosmedRestHandler.GetAllSosmedHandler)
+		sosmedRoute.PUT("/:sosmedId", authService.SocialMediaAuthorization(), sosmedRestHandler.UpdatedSosmedHandler)
+		sosmedRoute.DELETE("/:sosmedId", authService.SocialMediaAuthorization(), sosmedRestHandler.DeletedSosmedHandler)
 	}
 
 	fmt.Println("Server running on PORT =>", PORT)

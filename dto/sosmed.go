@@ -55,14 +55,22 @@ func ObjectAllsosmeds(data entity.SocialMedia) GetSosmedResponse {
 }
 
 func GetAllSosmedResponse(res []entity.SocialMedia) (responses []GetSosmedResponse) {
-	for _, photo := range res {
-		responses = append(responses, ObjectAllsosmeds(photo))
+	for _, sosmed := range res {
+		responses = append(responses, ObjectAllsosmeds(sosmed))
 	}
 	return
 }
 
-func Updatedsosmeds(data entity.SocialMedia) GetSosmedResponse {
-	return GetSosmedResponse{
+type UpdateSosmedResponse struct {
+	ID             int       `json:"id"`
+	Name           string    `json:"name"`
+	SocialMediaUrl string    `json:"social_media_url"`
+	UserID         int       `json:"user_id"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+func UpdatedsosmedsResponse(data entity.SocialMedia) UpdateSosmedResponse {
+	return UpdateSosmedResponse{
 		ID:             data.ID,
 		Name:           data.Name,
 		SocialMediaUrl: data.SocialMediaUrl,
