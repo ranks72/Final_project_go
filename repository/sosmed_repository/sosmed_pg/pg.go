@@ -24,3 +24,21 @@ func (u *sosmedPG) CreateSosmedRepo(sosmedPayload *entity.SocialMedia) (*entity.
 	}
 	return sosmedPayload, nil
 }
+
+func (u *sosmedPG) GetSosmedById(sosmedId int) (*entity.SocialMedia, errs.MessageErr) {
+	sosmed := &entity.SocialMedia{}
+	err := u.db.First(sosmed, "id", sosmedId).Error
+	if err != nil {
+		return nil, errs.NewInternalServerErrorr("something went wrong")
+	}
+	return sosmed, nil
+}
+
+func (u *sosmedPG) GetAllSosmedRepo() ([]entity.SocialMedia, errs.MessageErr) {
+	payloadSosmed := []entity.SocialMedia{}
+	if err := u.db.Preload("User").Find(&payloadSosmed).Error; err != nil {
+		return nil, errs.NewInternalServerErrorr("something went wrong")
+	}
+
+	return payloadSosmed, nil
+}

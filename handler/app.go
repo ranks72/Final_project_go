@@ -40,7 +40,7 @@ func StartServer() *gin.Engine {
 	sosmedService := service.NewSosmedService(sosmedRepo)
 	sosmedRestHandler := newSosmedHandler(sosmedService)
 
-	authService := service.NewAuthService(userRepo, photoRepo, commentRepo)
+	authService := service.NewAuthService(userRepo, photoRepo, commentRepo, sosmedRepo)
 
 	router.GET("/test", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "success"})

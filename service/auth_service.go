@@ -5,6 +5,7 @@ import (
 	"final_project_go/pkg/helpers"
 	"final_project_go/repository/comment_repository"
 	"final_project_go/repository/photo_repository"
+	"final_project_go/repository/sosmed_repository"
 	"final_project_go/repository/user_repository"
 	"net/http"
 
@@ -15,24 +16,27 @@ type AuthService interface {
 	Authentication() gin.HandlerFunc
 	PhotoAuthorization() gin.HandlerFunc
 	CommentAuthorization() gin.HandlerFunc
-	//SocialMediaAuthorization() gin.HandlerFunc
+	SocialMediaAuthorization() gin.HandlerFunc
 }
 
 type authService struct {
 	userRepo    user_repository.UserRepository
 	photoRepo   photo_repository.PhotoRepository
 	commentRepo comment_repository.CommentRepository
+	sosmedRepo  sosmed_repository.SosmedRepository
 }
 
 func NewAuthService(
 	userRepo user_repository.UserRepository,
 	photoRepo photo_repository.PhotoRepository,
 	commentRepo comment_repository.CommentRepository,
+	sosmedRepo sosmed_repository.SosmedRepository,
 ) AuthService {
 	return &authService{
 		userRepo:    userRepo,
 		photoRepo:   photoRepo,
 		commentRepo: commentRepo,
+		sosmedRepo:  sosmedRepo,
 	}
 }
 
@@ -171,8 +175,48 @@ func (a *authService) CommentAuthorization() gin.HandlerFunc {
 	})
 }
 
-// func (a *authService) SocialMediaAuthorization() gin.HandlerFunc {
-// 	return gin.HandlerFunc(func(ctx *gin.Context) {
+func (a *authService) SocialMediaAuthorization() gin.HandlerFunc {
+	return gin.HandlerFunc(func(ctx *gin.Context) {
+		var userData entity.User
 
-// 	})
-// }
+		if value, ok := ctx.MustGet("userData").(entity.User); !ok {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Bad Request",
+				"message": "unauthorized",
+			})
+			return
+		} else {
+			userData = value
+		}
+
+		sosmedIdParam, err := helpers.GetParamId(ctx, "sosmedId")
+
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   "Bad Request",
+				"message": "invalid parameter",
+			})
+			return
+		}
+
+		sosmed, err := a.sosmedRepo.GetSosmedById(sosmedIdParam)
+
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error":   "Data Not Found",
+				"message": "data doesn't exist",
+			})
+			return
+		}
+
+		if sosmed.UserID != userData.ID {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"error":   "Unauthorized",
+				"message": "you are not allowed to access this data",
+			})
+			return
+		}
+
+		ctx.Next()
+	})
+}

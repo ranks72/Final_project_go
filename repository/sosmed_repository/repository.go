@@ -7,4 +7,6 @@ import (
 
 type SosmedRepository interface {
 	CreateSosmedRepo(sosmedPayload *entity.SocialMedia) (*entity.SocialMedia, errs.MessageErr)
+	GetAllSosmedRepo() ([]entity.SocialMedia, errs.MessageErr)
+	GetSosmedById(sosmedId int) (*entity.SocialMedia, errs.MessageErr)
 }
