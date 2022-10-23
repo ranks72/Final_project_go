@@ -1,6 +1,7 @@
 package sosmed_pg
 
 import (
+	"errors"
 	"final_project_go/entity"
 	"final_project_go/pkg/errs"
 	"final_project_go/repository/sosmed_repository"
@@ -41,4 +42,24 @@ func (u *sosmedPG) GetAllSosmedRepo() ([]entity.SocialMedia, errs.MessageErr) {
 	}
 
 	return payloadSosmed, nil
+}
+
+func (u *sosmedPG) EditedSosmed(sosmedId int, sosmedPayload *entity.SocialMedia) (*entity.SocialMedia, errs.MessageErr) {
+	query := u.db.Where("id", sosmedId).Updates(sosmedPayload)
+	err := query.Error
+	if err == nil && query.RowsAffected < 1 {
+		return nil, errs.NewNotFoundError("social media doesn't exit")
+	}
+
+	return sosmedPayload, nil
+}
+
+func (u *sosmedPG) DeletedSosmed(sosmedId int) error {
+	query := u.db.Delete(new(*entity.SocialMedia), "id", sosmedId)
+	err := query.Error
+	if err == nil && query.RowsAffected < 1 {
+		return errors.New("NOT FOUND")
+	}
+
+	return err
 }
