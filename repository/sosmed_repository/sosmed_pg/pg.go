@@ -44,7 +44,7 @@ func (u *sosmedPG) GetAllSosmedRepo() ([]entity.SocialMedia, errs.MessageErr) {
 	return payloadSosmed, nil
 }
 
-func (u *sosmedPG) EditedSosmed(sosmedId int, sosmedPayload *entity.SocialMedia) (*entity.SocialMedia, errs.MessageErr) {
+func (u *sosmedPG) EditedSosmedRepo(sosmedId int, sosmedPayload *entity.SocialMedia) (*entity.SocialMedia, errs.MessageErr) {
 	query := u.db.Where("id", sosmedId).Updates(sosmedPayload)
 	err := query.Error
 	if err == nil && query.RowsAffected < 1 {
@@ -54,7 +54,7 @@ func (u *sosmedPG) EditedSosmed(sosmedId int, sosmedPayload *entity.SocialMedia)
 	return sosmedPayload, nil
 }
 
-func (u *sosmedPG) DeletedSosmed(sosmedId int) error {
+func (u *sosmedPG) DeletedSosmedRepo(sosmedId int) error {
 	query := u.db.Delete(new(*entity.SocialMedia), "id", sosmedId)
 	err := query.Error
 	if err == nil && query.RowsAffected < 1 {
