@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	_ "final_project_go/entity"
+	"final_project_go/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,7 +35,7 @@ func StartDb() {
 	fmt.Println("successfully connected to my database")
 
 	//untuk buat tabel baru
-	//db.Debug().AutoMigrate(entity.User{}, entity.Photo{}, entity.Comment{}, entity.SocialMedia{})
+	db.Debug().AutoMigrate(entity.User{}, entity.Photo{}, entity.Comment{}, entity.SocialMedia{})
 }
 
 func GetDb() *gorm.DB {
