@@ -10,7 +10,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"final_project_go/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"     // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 const PORT = ":8080"
@@ -41,6 +45,15 @@ func StartServer() *gin.Engine {
 	sosmedRestHandler := newSosmedHandler(sosmedService)
 
 	authService := service.NewAuthService(userRepo, photoRepo, commentRepo, sosmedRepo)
+
+	docs.SwaggerInfo.Title = "MyGram API"
+	docs.SwaggerInfo.Description = "Final Project Mygram FOR FGA "
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	//docs.SwaggerInfo.BasePath = "/v1"
+	docs.SwaggerInfo.Schemes = []string{"http"}
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	router.GET("/test", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "success"})

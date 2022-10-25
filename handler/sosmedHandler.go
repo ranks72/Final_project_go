@@ -20,6 +20,15 @@ func newSosmedHandler(sosmedService service.SosmedService) sosmedRestHandler {
 	}
 }
 
+// @Tags Social Media
+// @Summary Create social media
+// @ID create-social-media
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param RequestBody body dto.SosmedRequest true "json request body"
+// @Success 201 {object} dto.CreateSosmedResponse
+// @Router /socialmedias [post]
 func (u sosmedRestHandler) AddSosmedHandler(c *gin.Context) {
 	var sosmedRequest dto.SosmedRequest
 
@@ -52,6 +61,13 @@ func (u sosmedRestHandler) AddSosmedHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto.CreateSosmedResponses(result))
 }
 
+// @Tags Social Media
+// @Summary Get all social medias
+// @ID get-all-social-medias
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {array} dto.GetSosmedResponse
+// @Router /socialmedias [get]
 func (u sosmedRestHandler) GetAllSosmedHandler(c *gin.Context) {
 	result, err := u.service.GetAllSosmed()
 	if err != nil {
@@ -62,6 +78,16 @@ func (u sosmedRestHandler) GetAllSosmedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.GetAllSosmedResponse(result))
 }
 
+// @Tags Social Media
+// @Summary Update social media
+// @ID update-social-media
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param id path int true "sosmedId"
+// @Param RequestBody body dto.SosmedRequest true "json request body"
+// @Success 200 {object} dto.UpdateSosmedResponse
+// @Router /socialmedias/{sosmedId} [put]
 func (u sosmedRestHandler) UpdatedSosmedHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("sosmedId"))
 	if err != nil {
@@ -90,6 +116,14 @@ func (u sosmedRestHandler) UpdatedSosmedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.UpdatedsosmedsResponse(*result))
 }
 
+// @Tags Social Media
+// @Summary Delete social media
+// @ID delete-social-media
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param id path int true "sosmedId"
+// @Success 200 {object} dto.DeleteSosmedResponse
+// @Router /socialmedias/{sosmedId} [delete]
 func (u sosmedRestHandler) DeletedSosmedHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("sosmedId"))
 	if err != nil && id < 1 {
@@ -115,5 +149,8 @@ func (u sosmedRestHandler) DeletedSosmedHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, "your sosmed has been successfully deleted")
+	res := dto.DeleteSosmedResponse{
+		Message: "Your sosmed has been successfully deleted",
+	}
+	c.JSON(http.StatusOK, res)
 }

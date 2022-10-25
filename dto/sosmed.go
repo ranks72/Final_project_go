@@ -6,17 +6,17 @@ import (
 )
 
 type SosmedRequest struct {
-	Name           string `json:"name" valid:"required~Name of your Social Media is required"`
-	SocialMediaUrl string `json:"social_media_url" valid:"required~Url of Social Media is required"`
+	Name           string `json:"name" valid:"required~Name of your Social Media is required" example:"example"`
+	SocialMediaUrl string `json:"social_media_url" valid:"required~Url of Social Media is required" example:"https://instagram.com"`
 }
 
 // respon
 type CreateSosmedResponse struct {
-	ID             int       `json:"id"`
-	Name           string    `json:"name"`
-	SocialMediaUrl string    `json:"social_media_url"`
-	UserID         int       `json:"user_id"`
-	CreatedAt      time.Time `json:"created_at"`
+	ID             int       `json:"id" example:"1"`
+	Name           string    `json:"name" example:"example"`
+	SocialMediaUrl string    `json:"social_media_url" example:"https://instagram.com"`
+	UserID         int       `json:"user_id" example:"1"`
+	CreatedAt      time.Time `json:"created_at" example:"2022-10-07T15:54:24.575005+07:00"`
 }
 
 func CreateSosmedResponses(data *entity.SocialMedia) CreateSosmedResponse {
@@ -30,12 +30,12 @@ func CreateSosmedResponses(data *entity.SocialMedia) CreateSosmedResponse {
 }
 
 type GetSosmedResponse struct {
-	ID             int       `json:"id"`
-	Name           string    `json:"name"`
-	SocialMediaUrl string    `json:"social_media_url"`
-	UserID         int       `json:"user_id"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
+	ID             int       `json:"id" example:"1"`
+	Name           string    `json:"name" example:"example"`
+	SocialMediaUrl string    `json:"social_media_url" example:"https://instagram.com"`
+	UserID         int       `json:"user_id" example:"1"`
+	CreatedAt      time.Time `json:"created_at" example:"2022-10-07T15:54:24.575005+07:00"`
+	UpdatedAt      time.Time `json:"updated_at" example:"2022-10-07T15:54:24.575005+07:00"`
 	User           UserResponsePhoto
 }
 
@@ -62,11 +62,11 @@ func GetAllSosmedResponse(res []entity.SocialMedia) (responses []GetSosmedRespon
 }
 
 type UpdateSosmedResponse struct {
-	ID             int       `json:"id"`
-	Name           string    `json:"name"`
-	SocialMediaUrl string    `json:"social_media_url"`
-	UserID         int       `json:"user_id"`
-	UpdatedAt      time.Time `json:"updated_at"`
+	ID             int       `json:"id" example:"1"`
+	Name           string    `json:"name" example:"example"`
+	SocialMediaUrl string    `json:"social_media_url" example:"https://instagram.com"`
+	UserID         int       `json:"user_id" example:"1"`
+	UpdatedAt      time.Time `json:"updated_at" example:"2022-10-07T15:54:24.575005+07:00"`
 }
 
 func UpdatedsosmedsResponse(data entity.SocialMedia) UpdateSosmedResponse {
@@ -77,4 +77,8 @@ func UpdatedsosmedsResponse(data entity.SocialMedia) UpdateSosmedResponse {
 		UserID:         data.UserID,
 		UpdatedAt:      data.UpdatedAt,
 	}
+}
+
+type DeleteSosmedResponse struct {
+	Message string `json:"message" example:"your social media has been successfully deleted"`
 }

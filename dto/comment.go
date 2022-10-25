@@ -11,16 +11,16 @@ type CommentRequest struct {
 }
 
 type UpdateCommentRequest struct {
-	Message string `json:"message" valid:"required~Message of your comment is required" example:"example"`
+	Message string `json:"message" valid:"required~Message of your comment is required" example:"wow"`
 }
 
 type CommentResponse struct {
-	ID        int       `json:"id"`
+	ID        int       `json:"id" example:"1"`
 	Message   string    `json:"message" binding:"required" example:"example"`
-	PhotoID   int       `json:"photo_id"`
-	UserID    int       `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	PhotoID   int       `json:"photo_id" example:"1"`
+	UserID    int       `json:"user_id" example:"1"`
+	CreatedAt time.Time `json:"created_at" example:"2022-10-07T15:54:24.575005+07:00"`
+	UpdatedAt time.Time `json:"updated_at" example:"2022-10-07T15:54:24.575005+07:00"`
 }
 
 func CreateCommentResponses(data *entity.Comment) CommentResponse {
@@ -34,12 +34,12 @@ func CreateCommentResponses(data *entity.Comment) CommentResponse {
 }
 
 type GetCommentResponse struct {
-	ID        int                  `json:"id"`
+	ID        int                  `json:"id" example:"1"`
 	Message   string               `json:"message" binding:"required" example:"example"`
-	PhotoID   int                  `json:"photo_id"`
-	UserID    int                  `json:"user_id"`
-	CreatedAt time.Time            `json:"created_at"`
-	UpdatedAt time.Time            `json:"updated_at"`
+	PhotoID   int                  `json:"photo_id" example:"1"`
+	UserID    int                  `json:"user_id" example:"1"`
+	CreatedAt time.Time            `json:"created_at" example:"2022-10-07T15:54:24.575005+07:00"`
+	UpdatedAt time.Time            `json:"updated_at" example:"2022-10-07T15:54:24.575005+07:00"`
 	User      UserResponseComment  `json:"user"`
 	Photo     PhotoCommentResponse `json:"photo"`
 }
@@ -82,4 +82,8 @@ func UpdateCommentResponses(data *entity.Comment) CommentResponse {
 		UserID:    data.UserID,
 		UpdatedAt: data.UpdatedAt,
 	}
+}
+
+type DeleteCommentResponse struct {
+	Message string `json:"message" example:"your comment has been successfully deleted"`
 }

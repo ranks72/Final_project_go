@@ -20,6 +20,15 @@ func newCommentHandler(commentService service.CommentService) commentRestHandler
 	}
 }
 
+// @Tags Comment
+// @Summary Post comment
+// @ID post-comment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param RequestBody body dto.CommentRequest true "json request body"
+// @Success 201 {object} dto.CommentResponse
+// @Router /comments [post]
 func (u commentRestHandler) AddCommentHandler(c *gin.Context) {
 	var commentRequest dto.CommentRequest
 
@@ -50,6 +59,13 @@ func (u commentRestHandler) AddCommentHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto.CreateCommentResponses(result))
 }
 
+// @Tags Comment
+// @Summary Get all comments
+// @ID get-all-comments
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {array} dto.GetCommentResponse
+// @Router /comments [get]
 func (u commentRestHandler) GetAllCommentHandler(c *gin.Context) {
 	// userData := c.MustGet("userData")
 
@@ -63,6 +79,16 @@ func (u commentRestHandler) GetAllCommentHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.GetAllCommentResponse(result))
 }
 
+// @Tags Comment
+// @Summary Update comment
+// @ID update-comment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param id path int true "commentId"
+// @Param RequestBody body dto.UpdateCommentRequest true "json request body"
+// @Success 200 {object} dto.CommentResponse
+// @Router /comments/{commentId} [put]
 func (u commentRestHandler) UpdatedCommentHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
@@ -93,6 +119,14 @@ func (u commentRestHandler) UpdatedCommentHandler(c *gin.Context) {
 
 }
 
+// @Tags Comment
+// @Summary Delete comment
+// @ID delete-comment
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param id path int true "commentId"
+// @Success 200 {object} dto.DeleteCommentResponse
+// @Router /comments/{commentId} [delete]
 func (u commentRestHandler) DeletedCommentHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
@@ -117,7 +151,9 @@ func (u commentRestHandler) DeletedCommentHandler(c *gin.Context) {
 		})
 		return
 	}
-
-	c.JSON(http.StatusOK, "your comment has been successfully deleted")
+	res := dto.DeleteCommentResponse{
+		Message: "Your comment has been successfully deleted",
+	}
+	c.JSON(http.StatusOK, res)
 
 }

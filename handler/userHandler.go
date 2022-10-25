@@ -19,6 +19,14 @@ func newUserHandler(userService service.UserService) userRestHandler {
 	}
 }
 
+// @Tags User
+// @Summary Login user
+// @ID login-user
+// @Accept json
+// @Produce json
+// @Param RequestBody body dto.LoginRequest true "json request body"
+// @Success 200 {object} dto.LoginResponse
+// @Router /users/login [post]
 func (u userRestHandler) Login(c *gin.Context) {
 	var user dto.LoginRequest
 
@@ -43,9 +51,16 @@ func (u userRestHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 }
 
+// @Tags User
+// @Summary Register
+// @ID register-user
+// @Accept json
+// @Produce json
+// @Param RequestBody body dto.RegisterRequest true "json request body"
+// @Success 201 {object} dto.RegisterResponse
+// @Router /users/register [post]
 func (u userRestHandler) Register(c *gin.Context) {
 	var user dto.RegisterRequest
-	//var errormsg helpers.ErrorMsg
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 
@@ -66,6 +81,15 @@ func (u userRestHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto.DataRegisterResponse(*result))
 }
 
+// @Tags User
+// @Summary Update user
+// @ID update-user
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param RequestBody body dto.UpdateRequest true "json request body"
+// @Success 200 {object} dto.UpdateResponse
+// @Router /users [put]
 func (u userRestHandler) Updated(c *gin.Context) {
 	var userData entity.User
 	if value, ok := c.MustGet("userData").(entity.User); !ok {
@@ -96,6 +120,13 @@ func (u userRestHandler) Updated(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.DataUpdateResponse(*result))
 }
 
+// @Tags User
+// @Summary Delete user account
+// @ID delete-user
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {object} dto.DeleteResponse
+// @Router /users [delete]
 func (u userRestHandler) Deleted(c *gin.Context) {
 	var userData entity.User
 	if value, ok := c.MustGet("userData").(entity.User); !ok {
@@ -121,5 +152,10 @@ func (u userRestHandler) Deleted(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, "your account has been successfully deleted")
+
+	res := dto.DeleteResponse{
+		Message: "Your account has been successfully deleted",
+	}
+
+	c.JSON(http.StatusOK, res)
 }
